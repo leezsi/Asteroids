@@ -2,26 +2,30 @@ package ar.edu.unq.Asteroids.asteroid;
 
 import ar.edu.unq.Asteroids.levels.Level;
 import ar.edu.unq.americana.GameComponent;
+import ar.edu.unq.americana.appearances.Animation;
 import ar.edu.unq.americana.appearances.Sprite;
+import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.events.annotations.Events;
 import ar.edu.unq.americana.utils.Vector2D;
 
 public abstract class Asteroid extends GameComponent<Level> {
 
+	@Property("asteroid.speed")
+	private static double SPEED;
 	private final Vector2D vector;
 
 	public Asteroid(final double x, final double y, final Vector2D direction) {
-		this.setAppearance(this.getSprite());
+		this.setAppearance(new Animation(0.1, this.getSprites()));
 		this.setX(x);
 		this.setY(y);
 		vector = direction;
 	}
 
+	protected abstract Sprite[] getSprites();
+
 	public Asteroid(final double x, final double y) {
 		this(x, y, AsteroidUtils.getDirection(x, y));
 	}
-
-	protected abstract Sprite getSprite();
 
 	protected abstract Asteroid[] getChildren();
 
@@ -31,7 +35,7 @@ public abstract class Asteroid extends GameComponent<Level> {
 
 	@Events.Update
 	public void update(final double delta) {
-		final Vector2D newPos = vector.asVersor().producto(delta * 100);
+		final Vector2D newPos = vector.asVersor().producto(delta * SPEED);
 		this.move(newPos);
 
 		final double width = this.getAppearance().getWidth() / 2;

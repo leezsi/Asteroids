@@ -5,6 +5,7 @@ import ar.edu.unq.Asteroids.levels.Level;
 import ar.edu.unq.Asteroids.utils.ShipUtils;
 import ar.edu.unq.americana.DeltaState;
 import ar.edu.unq.americana.GameComponent;
+import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.constants.Key;
 import ar.edu.unq.americana.events.annotations.EventType;
 import ar.edu.unq.americana.events.annotations.Events;
@@ -12,8 +13,13 @@ import ar.edu.unq.americana.utils.Vector2D;
 
 public class Ship extends GameComponent<Level> {
 
-	private static final double ROTATION_DELTA = 40;
-	private static final double MAX_SPEED = 1;
+	@Property("ship.rotation_delta")
+	private static double ROTATION_DELTA;
+	@Property("ship.max_speed")
+	private static double MAX_SPEED;
+	@Property("ship.acceleration")
+	private static double ACCELERATION;
+
 	private double angle = 0;
 	private double acceleration = 0;
 	private double speed = 0;
@@ -53,12 +59,12 @@ public class Ship extends GameComponent<Level> {
 
 	@Events.Keyboard(key = Key.W, type = EventType.BeingHold)
 	public void goUp(final DeltaState state) {
-		acceleration = 2;
+		acceleration = ACCELERATION;
 	}
 
 	@Events.Keyboard(key = Key.W, type = EventType.Released)
 	public void goDown(final DeltaState state) {
-		acceleration = -2;
+		acceleration = -ACCELERATION;
 	}
 
 	@Events.Update
