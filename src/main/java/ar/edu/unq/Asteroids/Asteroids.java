@@ -1,17 +1,20 @@
 package ar.edu.unq.Asteroids;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.util.ArrayList;
 
-import ar.edu.unq.Asteroids.asteroid.AsteroidLarge;
-import ar.edu.unq.Asteroids.asteroid.AsteroidMedium;
-import ar.edu.unq.Asteroids.asteroid.AsteroidSmall;
 import ar.edu.unq.Asteroids.levels.Level;
-import ar.edu.unq.Asteroids.ship.Ship;
 import ar.edu.unq.americana.Game;
 import ar.edu.unq.americana.appearances.Sprite;
+import ar.edu.unq.americana.components.LifeCounter;
+import ar.edu.unq.americana.components.Score;
+import ar.edu.unq.americana.configs.Bean;
 import ar.edu.unq.americana.configs.Property;
+import ar.edu.unq.americana.utils.ResourcesUtils;
 
+@Bean
 public class Asteroids extends Game {
 
 	private static final int WIDTH = 800;
@@ -19,6 +22,12 @@ public class Asteroids extends Game {
 	private static final int HEIGHT = 600;
 
 	private Dimension dimension;
+
+	private int currentLevel = 0;
+
+	private Score<Level> score;
+
+	private LifeCounter<Level> lifeCounter;
 
 	public static ArrayList<Sprite> LARGE_ASTEROID_SPRITES;
 
@@ -29,11 +38,20 @@ public class Asteroids extends Game {
 	@Property("ship.sprite")
 	public static Sprite SHIP_SPRITE;
 
+	@Property("background.sprite")
+	public static Sprite BACKGROUND_SPRITE;
+
+	@Property("bullet.sprite")
+	public static Sprite BULLET_SPRITE;
+
 	@Property("asteroid.sprite.animation.basePath")
 	public static String ANIMATION_BASE_PATH;
 
 	@Property("asteroid.sprite.animation")
 	public static String ANIMATION_PATH;
+
+	@Property("game.levels")
+	public static int LEVELS;
 
 	@Override
 	protected String[] properties() {
@@ -42,7 +60,19 @@ public class Asteroids extends Game {
 
 	@Override
 	protected void initializeResources() {
-		dimension = new Dimension(WIDTH, HEIGHT);
+		BULLET_SPRITE = BULLET_SPRITE.rotate(Math.PI / 2);
+		this.initializeBackgroundSprite();
+		this.initializeAsteroidAnimation();
+
+	}
+
+	private void initializeBackgroundSprite() {
+		BACKGROUND_SPRITE = BACKGROUND_SPRITE.scale(
+				WIDTH / BACKGROUND_SPRITE.getWidth(), HEIGHT
+						/ BACKGROUND_SPRITE.getHeight());
+	}
+
+	private void initializeAsteroidAnimation() {
 		final String[] spritePaths = ANIMATION_PATH.split(",");
 		LARGE_ASTEROID_SPRITES = new ArrayList<Sprite>();
 		MEDIUM_ASTEROID_SPRITES = new ArrayList<Sprite>();
@@ -57,22 +87,35 @@ public class Asteroids extends Game {
 			MEDIUM_ASTEROID_SPRITES.add(medium);
 			SMALL_ASTEROID_SPRITES.add(medium.scale(0.5));
 		}
-
 	}
 
 	@Override
 	protected void setUpScenes() {
-		final Level level = new Level();
-		level.addComponent(new Ship());
-		level.addAsteroid(new AsteroidSmall(50, 150));
-		level.addAsteroid(new AsteroidMedium(50, 100));
-		level.addAsteroid(new AsteroidLarge(50, 50));
-		this.setCurrentScene(level);
+		this.start();
+	}
+
+	public void start() {
+		this.currentLevel = 0;
+		final Font font = ResourcesUtils.getFont("pixelated.ttf",
+				Font.TRUETYPE_FONT, Font.BOLD, 50);
+		this.score = new Score<Level>(10, font, Color.white);
+		this.lifeCounter = new LifeCounter<Level>(3, SHIP_SPRITE.scale(0.5));
+		this.nextLevel();
+	}
+
+	public void nextLevel() {
+		if (this.currentLevel < LEVELS) {
+			this.setCurrentScene(new Level(++this.currentLevel, this.score,
+					this.lifeCounter));
+		}
 	}
 
 	@Override
 	public Dimension getDisplaySize() {
-		return dimension;
+		if (this.dimension == null) {
+			this.dimension = new Dimension(WIDTH, HEIGHT);
+		}
+		return this.dimension;
 	}
 
 	@Override
