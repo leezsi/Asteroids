@@ -93,10 +93,6 @@ public class Level extends GameScene {
 				this.setAppearance(Asteroids.BACKGROUND_SPRITE);
 			}
 
-			@Override
-			protected boolean isCollisionable() {
-				return false;
-			}
 		});
 	}
 

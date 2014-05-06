@@ -4,7 +4,6 @@ import java.util.List;
 
 import ar.edu.unq.Asteroids.Asteroids;
 import ar.edu.unq.Asteroids.asteroid.Asteroid;
-import ar.edu.unq.Asteroids.bullet.Bullet;
 import ar.edu.unq.Asteroids.levels.Level;
 import ar.edu.unq.Asteroids.rules.BottomOutRule;
 import ar.edu.unq.Asteroids.rules.LeftOutRule;
@@ -14,7 +13,6 @@ import ar.edu.unq.Asteroids.utils.ShipUtils;
 import ar.edu.unq.americana.DeltaState;
 import ar.edu.unq.americana.GameComponent;
 import ar.edu.unq.americana.colissions.CollisionDetector;
-import ar.edu.unq.americana.colissions.CollitionGroup;
 import ar.edu.unq.americana.components.utils.ComponentUtils;
 import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.constants.Key;
@@ -49,7 +47,6 @@ public class Ship extends GameComponent<Level> {
 	}
 
 	public Ship() {
-		CollitionGroup.setAs(this, Bullet.class);
 		this.setAppearance(Asteroids.SHIP_SPRITE);
 		this.setZ(2);
 		this.vector = new Vector2D(0, -1);

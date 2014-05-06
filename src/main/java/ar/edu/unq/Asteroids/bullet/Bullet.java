@@ -8,7 +8,6 @@ import ar.edu.unq.Asteroids.rules.RightOutRule;
 import ar.edu.unq.Asteroids.rules.TopOutRule;
 import ar.edu.unq.Asteroids.ship.Ship;
 import ar.edu.unq.americana.GameComponent;
-import ar.edu.unq.americana.colissions.CollitionGroup;
 import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.events.annotations.Events;
 import ar.edu.unq.americana.rules.IRule;
@@ -21,7 +20,6 @@ public class Bullet extends GameComponent<Level> {
 	private double remainingLife;
 
 	public Bullet() {
-		CollitionGroup.setAs(this, Ship.class);
 		this.setAppearance(Asteroids.BULLET_SPRITE.copy());
 	}
 
