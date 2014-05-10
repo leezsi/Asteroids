@@ -40,7 +40,7 @@ public class Bullet extends GameComponent<Level> {
 				delta * SPEED);
 		this.remainingLife -= currentVector.getModule() * 1.25;
 		if (this.remainingLife <= 0) {
-			this.destroy();
+			this.die();
 		} else {
 			this.move(currentVector);
 		}
@@ -53,10 +53,8 @@ public class Bullet extends GameComponent<Level> {
 				new BottomOutRule(), new RightOutRule() };
 	}
 
-	@Override
-	public void destroy() {
+	public void die() {
 		this.fire(new BulletDieEvent(this));
-		super.destroy();
 	}
 
 }

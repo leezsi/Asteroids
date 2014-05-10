@@ -5,17 +5,19 @@ import java.util.Set;
 
 import ar.edu.unq.Asteroids.Asteroids;
 import ar.edu.unq.Asteroids.asteroid.Asteroid;
+import ar.edu.unq.Asteroids.asteroid.AsteroidDieEvent;
 import ar.edu.unq.Asteroids.asteroid.pools.AsteroidPool;
 import ar.edu.unq.Asteroids.bullet.Bullet;
 import ar.edu.unq.Asteroids.bullet.BulletDieEvent;
 import ar.edu.unq.Asteroids.bullet.BulletPool;
+import ar.edu.unq.Asteroids.extrascenes.LevelWinScene;
 import ar.edu.unq.Asteroids.ship.Ship;
 import ar.edu.unq.Asteroids.ship.ShipFireEvent;
 import ar.edu.unq.Asteroids.ship.ShipLossLiveEvent;
 import ar.edu.unq.americana.Game;
-import ar.edu.unq.americana.GameComponent;
 import ar.edu.unq.americana.GameScene;
 import ar.edu.unq.americana.appearances.Appearance;
+import ar.edu.unq.americana.components.Background;
 import ar.edu.unq.americana.components.LifeCounter;
 import ar.edu.unq.americana.components.Score;
 import ar.edu.unq.americana.events.annotations.Events;
@@ -40,6 +42,8 @@ public class Level extends GameScene {
 		this.bulletPool = new BulletPool();
 		this.level = level;
 		this.addComponent(this.ship = new Ship());
+		this.addComponent(new Background<Level>(Asteroids.BACKGROUND_SPRITE));
+
 	}
 
 	private void align(final Score<Level> score,
@@ -59,7 +63,6 @@ public class Level extends GameScene {
 	@Override
 	public void setGame(final Game game) {
 		super.setGame(game);
-		this.addBackground(game);
 		this.addLargeAsteroids(this.level);
 		this.addMediumAsteroids(this.level);
 		this.addSmallAsteroids(this.level);
@@ -81,21 +84,6 @@ public class Level extends GameScene {
 		}
 	}
 
-	private void addBackground(final Game game) {
-
-		final int width = game.getDisplayWidth();
-		final int height = game.getDisplayHeight();
-		this.addComponent(new GameComponent<Level>() {
-			{
-				this.setX(width / 2);
-				this.setY(height / 2);
-				this.setZ(0);
-				this.setAppearance(Asteroids.BACKGROUND_SPRITE);
-			}
-
-		});
-	}
-
 	@Events.Fired(ShipFireEvent.class)
 	private void bulletFireRequest(final ShipFireEvent event) {
 		final Bullet bullet = this.bulletPool.get();
@@ -108,21 +96,28 @@ public class Level extends GameScene {
 	@Events.Fired(BulletDieEvent.class)
 	public void bulletDie(final BulletDieEvent event) {
 		final Bullet bullet = event.getBullet();
-		this.removeComponent(bullet);
+		bullet.destroy();
 		this.bulletPool.add(bullet);
 	}
 
 	@Events.Fired(ShipLossLiveEvent.class)
 	private void shipLoosLive(final ShipLossLiveEvent event) {
-		event.getAsteroid().onDie();
 		this.lifeCounter.lossLife();
 		this.replaceShip();
+		final Asteroid asteroid = event.getAsteroid();
+		this.replace(asteroid, asteroid.getChildren());
+	}
+
+	@Events.Fired(AsteroidDieEvent.class)
+	private void AsteroidDie(final AsteroidDieEvent event) {
+		this.score.addPoint();
+		this.replace(event.getAsteroid(), event.children());
 	}
 
 	private void replaceShip() {
 		this.ship.destroy();
 		this.addComponent(this.ship = new Ship());
-		this.ship.center();
+		this.ship.onSceneActivated();
 	}
 
 	protected Set<Asteroid> getAsteroids() {
@@ -137,8 +132,12 @@ public class Level extends GameScene {
 	public void replace(final Asteroid asteroid, final Asteroid... children) {
 		asteroid.destroy();
 		asteroid.returnToPool();
+		this.asteroids.remove(asteroid);
 		for (final Asteroid child : children) {
 			this.addAsteroid(child);
+		}
+		if (this.asteroids.isEmpty()) {
+			this.getGame().setCurrentScene(new LevelWinScene(this.score));
 		}
 	}
 

@@ -13,7 +13,7 @@ public class AsteroidSmall extends Asteroid {
 	}
 
 	@Override
-	protected Asteroid[] getChildren() {
+	public Asteroid[] getChildren() {
 		return new Asteroid[0];
 	}
 

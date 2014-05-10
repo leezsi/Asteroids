@@ -1,7 +1,5 @@
 package ar.edu.unq.Asteroids.ship;
 
-import java.util.List;
-
 import ar.edu.unq.Asteroids.Asteroids;
 import ar.edu.unq.Asteroids.asteroid.Asteroid;
 import ar.edu.unq.Asteroids.levels.Level;
@@ -12,12 +10,11 @@ import ar.edu.unq.Asteroids.rules.TopOutRule;
 import ar.edu.unq.Asteroids.utils.ShipUtils;
 import ar.edu.unq.americana.DeltaState;
 import ar.edu.unq.americana.GameComponent;
-import ar.edu.unq.americana.colissions.CollisionDetector;
-import ar.edu.unq.americana.components.utils.ComponentUtils;
 import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.constants.Key;
 import ar.edu.unq.americana.events.annotations.EventType;
 import ar.edu.unq.americana.events.annotations.Events;
+import ar.edu.unq.americana.events.ioc.collision.CollisionStrategy;
 import ar.edu.unq.americana.rules.IRule;
 import ar.edu.unq.americana.utils.Vector2D;
 
@@ -49,19 +46,14 @@ public class Ship extends GameComponent<Level> {
 	public Ship() {
 		this.setAppearance(Asteroids.SHIP_SPRITE);
 		this.setZ(2);
-		this.vector = new Vector2D(0, -1);
 		this.shootSleep = 0;
+		this.vector = new Vector2D(0, -1);
 	}
 
 	@Override
 	public void onSceneActivated() {
-		this.center();
-	}
-
-	public Ship center() {
 		this.setX(this.getGame().getDisplayWidth() / 2);
 		this.setY(this.getGame().getDisplayHeight() / 2);
-		return this;
 	}
 
 	@Events.Keyboard(key = Key.D, type = EventType.BeingHold)
@@ -102,21 +94,15 @@ public class Ship extends GameComponent<Level> {
 		if (this.speed > 0) {
 			final Vector2D newPos = this.vector.asVersor().producto(this.speed);
 			this.move(newPos);
-			this.checkCollisions();
 		} else {
 			this.speed = 0;
 		}
 	}
 
-	private void checkCollisions() {
-		final List<Asteroid> asteroids = ComponentUtils
-				.filter(this.getScene().getComponents())
-				.byClass(Asteroid.class).get();
-		for (final Asteroid asteroid : asteroids) {
-			if (CollisionDetector.perfectPixel(this, asteroid)) {
-				this.fire(new ShipLossLiveEvent(this, asteroid));
-			}
-		}
+	@Events.ColitionCheck.ForType(collisionStrategy = CollisionStrategy.PerfectPixel, type = Asteroid.class)
+	private void checkAsteroidCollision(final Asteroid asteroid) {
+		this.destroy();
+		this.fire(new ShipLossLiveEvent(this, asteroid));
 	}
 
 	@Override

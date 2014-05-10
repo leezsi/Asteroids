@@ -14,7 +14,7 @@ public class AsteroidMedium extends Asteroid {
 	}
 
 	@Override
-	protected Asteroid[] getChildren() {
+	public Asteroid[] getChildren() {
 		final Asteroid child1 = AsteroidPool.getSmall().initialize(this);
 		final Asteroid child2 = AsteroidPool.getSmall().initialize(this);
 		return new Asteroid[] { child1, child2 };

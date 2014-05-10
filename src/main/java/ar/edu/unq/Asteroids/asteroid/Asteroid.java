@@ -1,7 +1,5 @@
 package ar.edu.unq.Asteroids.asteroid;
 
-import java.util.List;
-
 import ar.edu.unq.Asteroids.bullet.Bullet;
 import ar.edu.unq.Asteroids.bullet.BulletDieEvent;
 import ar.edu.unq.Asteroids.levels.Level;
@@ -12,10 +10,9 @@ import ar.edu.unq.Asteroids.rules.TopOutRule;
 import ar.edu.unq.americana.GameComponent;
 import ar.edu.unq.americana.appearances.Animation;
 import ar.edu.unq.americana.appearances.Sprite;
-import ar.edu.unq.americana.colissions.CollisionDetector;
-import ar.edu.unq.americana.components.utils.ComponentUtils;
 import ar.edu.unq.americana.configs.Property;
 import ar.edu.unq.americana.events.annotations.Events;
+import ar.edu.unq.americana.events.ioc.collision.CollisionStrategy;
 import ar.edu.unq.americana.rules.IRule;
 import ar.edu.unq.americana.utils.TrigonometricsAndRandomUtils;
 import ar.edu.unq.americana.utils.Vector2D;
@@ -58,34 +55,22 @@ public abstract class Asteroid extends GameComponent<Level> {
 
 	protected abstract Sprite[] getSprites();
 
-	protected abstract Asteroid[] getChildren();
+	public abstract Asteroid[] getChildren();
 
 	public void onDie(final Bullet bullet) {
-		this.onDie();
+		this.fire(new AsteroidDieEvent(this));
 		this.fire(new BulletDieEvent(bullet));
-	}
-
-	public void onDie() {
-		this.getScene().replace(this, this.getChildren());
-		this.getScene().getScore().addPoint();
 	}
 
 	@Events.Update
 	public void update(final double delta) {
 		final Vector2D newPos = this.vector.asVersor().producto(delta * SPEED);
 		this.move(newPos);
-		this.checkCollisions();
 	}
 
-	private void checkCollisions() {
-		final List<Bullet> bullets = ComponentUtils
-				.filter(this.getScene().getComponents()).byClass(Bullet.class)
-				.get();
-		for (final Bullet bullet : bullets) {
-			if (CollisionDetector.perfectPixel(this, bullet)) {
-				this.onDie(bullet);
-			}
-		}
+	@Events.ColitionCheck.ForType(collisionStrategy = CollisionStrategy.PerfectPixel, type = Bullet.class)
+	private void bulletCollision(final Bullet bullet) {
+		this.onDie(bullet);
 	}
 
 	@Override

@@ -23,11 +23,16 @@ public class Asteroids extends Game {
 
 	private Dimension dimension;
 
-	private int currentLevel = 0;
+	private int currentLevel;
 
 	private Score<Level> score;
 
 	private LifeCounter<Level> lifeCounter;
+
+	private boolean finish;
+
+	public static final Font font = ResourcesUtils.getFont("pixelated.ttf",
+			Font.TRUETYPE_FONT, Font.BOLD, 50);
 
 	public static ArrayList<Sprite> LARGE_ASTEROID_SPRITES;
 
@@ -96,17 +101,19 @@ public class Asteroids extends Game {
 
 	public void start() {
 		this.currentLevel = 0;
-		final Font font = ResourcesUtils.getFont("pixelated.ttf",
-				Font.TRUETYPE_FONT, Font.BOLD, 50);
-		this.score = new Score<Level>(10, font, Color.white);
+		this.finish = false;
+		this.score = new Score<Level>(10, Asteroids.font, Color.white);
 		this.lifeCounter = new LifeCounter<Level>(3, SHIP_SPRITE.scale(0.5));
 		this.nextLevel();
 	}
 
 	public void nextLevel() {
 		if (this.currentLevel < LEVELS) {
+			this.score.setDestroyPending(false);
+			this.lifeCounter.setDestroyPending(false);
 			this.setCurrentScene(new Level(++this.currentLevel, this.score,
 					this.lifeCounter));
+			this.finish = this.currentLevel == LEVELS;
 		}
 	}
 
@@ -121,6 +128,10 @@ public class Asteroids extends Game {
 	@Override
 	public String getTitle() {
 		return "Asteroids";
+	}
+
+	public boolean isFinish() {
+		return this.finish;
 	}
 
 }
