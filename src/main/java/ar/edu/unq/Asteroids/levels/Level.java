@@ -10,6 +10,7 @@ import ar.edu.unq.Asteroids.asteroid.pools.AsteroidPool;
 import ar.edu.unq.Asteroids.bullet.Bullet;
 import ar.edu.unq.Asteroids.bullet.BulletDieEvent;
 import ar.edu.unq.Asteroids.bullet.BulletPool;
+import ar.edu.unq.Asteroids.extrascenes.GameOverScene;
 import ar.edu.unq.Asteroids.extrascenes.LevelWinScene;
 import ar.edu.unq.Asteroids.ship.Ship;
 import ar.edu.unq.Asteroids.ship.ShipFireEvent;
@@ -103,9 +104,14 @@ public class Level extends GameScene {
 	@Events.Fired(ShipLossLiveEvent.class)
 	private void shipLoosLive(final ShipLossLiveEvent event) {
 		this.lifeCounter.lossLife();
-		this.replaceShip();
-		final Asteroid asteroid = event.getAsteroid();
-		this.replace(asteroid, asteroid.getChildren());
+		if (this.lifeCounter.isDead()) {
+			final int score2 = this.score.getScore();
+			this.getGame().setCurrentScene(new GameOverScene(score2));
+		} else {
+			this.replaceShip();
+			final Asteroid asteroid = event.getAsteroid();
+			this.replace(asteroid, asteroid.getChildren());
+		}
 	}
 
 	@Events.Fired(AsteroidDieEvent.class)

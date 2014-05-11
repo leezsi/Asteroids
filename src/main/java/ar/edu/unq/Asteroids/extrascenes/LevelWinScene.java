@@ -9,7 +9,6 @@ import ar.edu.unq.americana.appearances.Shape;
 import ar.edu.unq.americana.components.Score;
 import ar.edu.unq.americana.configs.Bean;
 import ar.edu.unq.americana.scenes.MenuScene;
-import ar.edu.unq.americana.utils.ResourcesUtils;
 
 public class LevelWinScene extends MenuScene {
 	@Bean
@@ -42,7 +41,6 @@ public class LevelWinScene extends MenuScene {
 				LevelWinScene.this.game.closeGame();
 			}
 		}).build();
-		;
 	}
 
 	@Override
@@ -52,8 +50,7 @@ public class LevelWinScene extends MenuScene {
 
 	@Override
 	public Font getFont() {
-		return ResourcesUtils.getFont("pixelated.ttf", Font.TRUETYPE_FONT,
-				Font.BOLD, 50);
+		return Asteroids.font;
 	}
 
 	@Override

@@ -40,6 +40,9 @@ public class Asteroids extends Game {
 
 	public static ArrayList<Sprite> SMALL_ASTEROID_SPRITES;
 
+	@Property("ship.lives")
+	public static int LIVES;
+
 	@Property("ship.sprite")
 	public static Sprite SHIP_SPRITE;
 
@@ -103,7 +106,7 @@ public class Asteroids extends Game {
 		this.currentLevel = 0;
 		this.finish = false;
 		this.score = new Score<Level>(10, Asteroids.font, Color.white);
-		this.lifeCounter = new LifeCounter<Level>(3, SHIP_SPRITE.scale(0.5));
+		this.lifeCounter = new LifeCounter<Level>(LIVES, SHIP_SPRITE.scale(0.5));
 		this.nextLevel();
 	}
 
