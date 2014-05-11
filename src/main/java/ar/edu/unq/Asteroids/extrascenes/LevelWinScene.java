@@ -13,28 +13,22 @@ import ar.edu.unq.americana.scenes.MenuScene;
 public class LevelWinScene extends MenuScene {
 	@Bean
 	private Asteroids game;
+	private final int score;
 
 	public LevelWinScene(final Score<Level> score) {
 		super(Asteroids.BACKGROUND_SPRITE);
+		this.score = score.getScore();
 	}
 
 	@Override
 	protected void addButtons(final MenuButtonBuilder buttonBuilder) {
-		if (this.game.isFinish()) {
-			buttonBuilder.text("new_game").onClick(new Runnable() {
-				@Override
-				public void run() {
-					LevelWinScene.this.game.start();
-				}
-			}).build();
-		} else {
-			buttonBuilder.text("next_level").onClick(new Runnable() {
-				@Override
-				public void run() {
-					LevelWinScene.this.game.nextLevel();
-				}
-			}).build();
-		}
+		buttonBuilder.text("next_level").onClick(new Runnable() {
+			@Override
+			public void run() {
+				LevelWinScene.this.game.nextLevel();
+			}
+		}).build();
+
 		buttonBuilder.text("exit").onClick(new Runnable() {
 			@Override
 			public void run() {

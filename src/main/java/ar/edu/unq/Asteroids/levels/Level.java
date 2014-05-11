@@ -1,5 +1,6 @@
 package ar.edu.unq.Asteroids.levels;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,7 +107,8 @@ public class Level extends GameScene {
 		this.lifeCounter.lossLife();
 		if (this.lifeCounter.isDead()) {
 			final int score2 = this.score.getScore();
-			this.getGame().setCurrentScene(new GameOverScene(score2));
+			this.getGame().setCurrentScene(
+					new GameOverScene(score2, Color.red, "gameover_loss"));
 		} else {
 			this.replaceShip();
 			final Asteroid asteroid = event.getAsteroid();
@@ -143,7 +145,13 @@ public class Level extends GameScene {
 			this.addAsteroid(child);
 		}
 		if (this.asteroids.isEmpty()) {
-			this.getGame().setCurrentScene(new LevelWinScene(this.score));
+			if (((Asteroids) this.getGame()).isFinish()) {
+				this.getGame().setCurrentScene(
+						new GameOverScene(this.score.getScore(), Color.green,
+								"gameover_win"));
+			} else {
+				this.getGame().setCurrentScene(new LevelWinScene(this.score));
+			}
 		}
 	}
 

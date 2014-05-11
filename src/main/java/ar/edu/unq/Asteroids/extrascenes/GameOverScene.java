@@ -15,19 +15,27 @@ public class GameOverScene extends MenuScene {
 
 	private final int score;
 
-	public GameOverScene(final int score) {
+	private final Color disclaimerColor;
+
+	private final String disclaimerKey;
+
+	public GameOverScene(final int score, final Color disclaimerColor,
+			final String disclaimerKey) {
 		super(Asteroids.BACKGROUND_SPRITE);
 		this.score = score;
+		this.disclaimerColor = disclaimerColor;
+		this.disclaimerKey = disclaimerKey;
 	}
 
 	@Override
 	protected Color disclamerColor() {
-		return Color.red;
+		return this.disclaimerColor;
 	}
 
 	@Override
 	protected String disclamer() {
-		return "You loose, Try again\nyour score is " + this.score;
+		return this.game.getLocaleBoundle().getString(this.disclaimerKey) + " "
+				+ this.score;
 	}
 
 	@Override
