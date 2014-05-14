@@ -64,7 +64,7 @@ public abstract class Asteroid extends GameComponent<Level> {
 
 	@Events.Update
 	public void update(final double delta) {
-		final Vector2D newPos = this.vector.asVersor().producto(delta * SPEED);
+		final Vector2D newPos = this.vector.asVersor().multiply(delta * SPEED);
 		this.move(newPos);
 	}
 

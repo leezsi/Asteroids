@@ -18,17 +18,20 @@ public class Bullet extends GameComponent<Level> {
 	private static double SPEED;
 	private Vector2D vector;
 	private double remainingLife;
+	private double speed;
 
 	public Bullet() {
 		this.setAppearance(Asteroids.BULLET_SPRITE.copy());
 	}
 
-	public void initializeFrom(final Ship ship) {
+	public void initializeFrom(final Ship ship, final double initialSpeed,
+			final Vector2D direction) {
 		this.setDestroyPending(false);
 		this.setX(ship.getX());
 		this.setY(ship.getY());
 		this.setZ(ship.getZ() - 1);
-		this.vector = ship.getVector();
+		this.vector = direction;
+		this.speed = SPEED + initialSpeed;
 		this.remainingLife = Math.max(ship.getGame().getDisplayWidth(), ship
 				.getGame().getDisplayHeight());
 		this.setAppearance(Asteroids.BULLET_SPRITE.rotate(ship.getAngle()));
@@ -36,8 +39,8 @@ public class Bullet extends GameComponent<Level> {
 
 	@Events.Update
 	public void update(final double delta) {
-		final Vector2D currentVector = this.vector.asVersor().producto(
-				delta * SPEED);
+		final Vector2D currentVector = this.vector.asVersor().multiply(
+				delta * this.speed);
 		this.remainingLife -= currentVector.getModule() * 1.25;
 		if (this.remainingLife <= 0) {
 			this.die();

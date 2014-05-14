@@ -90,7 +90,8 @@ public class Level extends GameScene {
 	private void bulletFireRequest(final ShipFireEvent event) {
 		final Bullet bullet = this.bulletPool.get();
 		if (bullet != null) {
-			bullet.initializeFrom(this.ship);
+			bullet.initializeFrom(this.ship, event.getShipSpeed(),
+					event.getDirection());
 			this.addComponent(bullet);
 		}
 	}
