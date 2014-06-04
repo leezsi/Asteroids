@@ -1,23 +1,18 @@
 package ar.edu.unq.Asteroids.ship;
 
 import ar.edu.unq.americana.events.ioc.fired.FiredEvent;
-import ar.edu.unq.americana.utils.Vector2D;
+import ar.edu.unq.americana.physic.Physics;
 
 public class ShipFireEvent extends FiredEvent {
 
-	private final double shipSpeed;
-	private final Vector2D direction;
+	private final Physics shipPhysic;
 
-	public ShipFireEvent(final double speed, final Vector2D direction) {
-		this.shipSpeed = speed;
-		this.direction = direction;
+	public ShipFireEvent(final Physics shipPhysic) {
+		this.shipPhysic = shipPhysic;
 	}
 
-	public Vector2D getDirection() {
-		return this.direction;
+	public Physics getShipPhysic() {
+		return this.shipPhysic;
 	}
 
-	public double getShipSpeed() {
-		return this.shipSpeed;
-	}
 }

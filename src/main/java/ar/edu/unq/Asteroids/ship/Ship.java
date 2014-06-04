@@ -32,17 +32,11 @@ public class Ship extends GameComponent<Level> {
 	@Property("ship.fire_sleep")
 	private static double FIRE_SLEEP;
 
-	private double angle = 0;
-	private final double speed = 0;
+	private double angle = -Math.PI / 2;
 	private Physics physics;
 	private double shootSleep;
 
-	public double getSpeed() {
-		return this.speed;
-	}
-
 	public Ship() {
-		this.setAppearance(Asteroids.SHIP_SPRITE);
 		this.setZ(2);
 		this.shootSleep = 0;
 	}
@@ -51,9 +45,10 @@ public class Ship extends GameComponent<Level> {
 	public void onSceneActivated() {
 		this.setX(this.getGame().getDisplayWidth() / 2);
 		this.setY(this.getGame().getDisplayHeight() / 2);
-		this.physics = Physics.initialize(-Math.PI / 2);
+		this.physics = Physics.inersialEngine(this.angle);
 		this.physics.friction(ACCELERATION * 0.01);
-		this.physics.maxSpeed(MAX_SPEED);
+		this.setAppearance(Asteroids.SHIP_SPRITE.rotate(this.physics
+				.spriteRotatationAngle()));
 	}
 
 	@Events.Keyboard(key = Key.D, type = EventType.BeingHold)
@@ -76,7 +71,8 @@ public class Ship extends GameComponent<Level> {
 
 	private void rotateSprite(final double rotation) {
 		this.angle += rotation;
-		this.setAppearance(Asteroids.SHIP_SPRITE.rotate(this.angle));
+		final double alpha = this.physics.spriteRotatationAngle();
+		this.setAppearance(Asteroids.SHIP_SPRITE.rotate(alpha));
 	}
 
 	@Events.Keyboard(key = Key.W, type = EventType.BeingHold)
@@ -93,6 +89,7 @@ public class Ship extends GameComponent<Level> {
 	public void fire(final DeltaState state) {
 		if (this.shootSleep <= 0) {
 			this.shootSleep = Ship.FIRE_SLEEP;
+			this.fire(new ShipFireEvent(this.physics));
 		}
 	}
 
